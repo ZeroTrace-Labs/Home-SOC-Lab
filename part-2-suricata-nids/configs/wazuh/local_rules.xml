@@ -1,0 +1,35 @@
+<!--
+  Wazuh manager custom rules: /var/ossec/etc/rules/local_rules.xml
+  (inside the container: docker exec -it single-node-wazuh.manager-1 bash)
+
+  They extend Wazuh's built-in Suricata rule 86601 ("Suricata: Alert - <signature>")
+  and rewrite the description based on the source VM. The built-in JSON decoder
+  already exposes `src_ip`, so NO custom decoder is needed (see README, Bottlenecks 4 & 7).
+
+  Apply with:
+    docker restart single-node-wazuh.manager-1
+-->
+<group name="suricata,custom_alerts,">
+
+  <!-- Kali Linux -->
+  <rule id="100001" level="3">
+    <if_sid>86601</if_sid>
+    <field name="src_ip">^172\.16\.50\.10$</field>
+    <description>Suricata: ICMP Traffic Detected from Kali Linux (172.16.50.10)</description>
+  </rule>
+
+  <!-- Ubuntu Desktop -->
+  <rule id="100002" level="3">
+    <if_sid>86601</if_sid>
+    <field name="src_ip">^172\.16\.50\.20$</field>
+    <description>Suricata: ICMP Traffic Detected from Ubuntu Desktop (172.16.50.20)</description>
+  </rule>
+
+  <!-- Windows 11 -->
+  <rule id="100003" level="3">
+    <if_sid>86601</if_sid>
+    <field name="src_ip">^172\.16\.50\.30$</field>
+    <description>Suricata: ICMP Traffic Detected from Windows 11 (172.16.50.30)</description>
+  </rule>
+
+</group>

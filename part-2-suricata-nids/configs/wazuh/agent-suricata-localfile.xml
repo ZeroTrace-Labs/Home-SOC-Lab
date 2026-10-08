@@ -1,0 +1,12 @@
+<!--
+  NOTE: log_format must be "json". "suricata" is NOT a valid value and stops the agent.
+
+  Add to /var/ossec/etc/ossec.conf on the gateway agent (taron-ubuntu-srv, ID 005),
+  then: sudo systemctl restart wazuh-agent
+-->
+<ossec_config>
+  <localfile>
+    <log_format>json</log_format>
+    <location>/var/log/suricata/eve.json</location>
+  </localfile>
+</ossec_config>

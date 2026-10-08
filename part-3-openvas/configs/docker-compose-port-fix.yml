@@ -1,0 +1,27 @@
+# The two edits made to Greenbone's official docker-compose.yml so it runs on a
+# Mac that ALSO runs the Wazuh Docker stack. See Part 3 README, Bottlenecks 2-5.
+# Result: Greenbone web UI at https://127.0.0.1:9392
+
+services:
+
+  # 1) nginx is the web entry point. Publish ONLY host 9392 -> container 443 (TLS).
+  #    - 127.0.0.1:443:443   removed: host port 443 is already taken by the Wazuh dashboard
+  #    - 127.0.0.1:9392:9392 changed: nginx's 9392 is plain HTTP (redirects to 443),
+  #                          so https://127.0.0.1:9392 gave ERR_SSL_PROTOCOL_ERROR
+  nginx:
+    image: registry.community.greenbone.net/community/nginx:latest
+    ports:
+      # - 127.0.0.1:443:443
+      - 127.0.0.1:9392:443
+
+  # 2) gsad must NOT publish any port. It runs HTTP-only + API-only behind nginx;
+  #    exposing it directly gives ERR_CONNECTION_CLOSED / ERR_EMPTY_RESPONSE and
+  #    steals port 9392 from nginx ("port is already allocated").
+  gsad:
+    image: registry.community.greenbone.net/community/gsad:stable
+    # ports:
+    #   - "127.0.0.1:9392:80"
+    environment:
+      GSAD_HTTP_ONLY: "true"
+      GSAD_API_ONLY: "true"
+      GSAD_FOREGROUND: "true"

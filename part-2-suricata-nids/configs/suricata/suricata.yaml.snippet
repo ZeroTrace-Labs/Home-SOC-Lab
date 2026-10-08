@@ -1,0 +1,19 @@
+# Relevant parts of /etc/suricata/suricata.yaml on the gateway (Suricata 8.0.x)
+
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,172.16.50.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
+
+# Sniff the INTERNAL (LAN) interface only. The default config ships with `eth0`,
+# which does not exist on this VM and crashes the capture threads.
+af-packet:
+  - interface: enp0s2
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+  - suricata.rules   # ET Open, populated by `sudo suricata-update`
+  - local.rules      # lab test signatures (configs/suricata/local.rules)

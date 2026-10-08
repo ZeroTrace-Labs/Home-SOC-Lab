@@ -1,0 +1,27 @@
+<!--
+  MANAGER side: add these two blocks inside the EXISTING <ossec_config> of
+  /var/ossec/etc/ossec.conf in the manager container. Do NOT replace the whole file
+  with this snippet: that wipes the ruleset/remote/auth sections and breaks the
+  manager (Part 1 README, Bottleneck 10).
+
+  Safe way to edit from the Mac:
+    docker cp single-node-wazuh.manager-1:/var/ossec/etc/ossec.conf ./ossec.conf.bak
+    # edit a copy locally, then:
+    docker cp ./ossec.conf single-node-wazuh.manager-1:/var/ossec/etc/ossec.conf
+    docker restart single-node-wazuh.manager-1
+
+  Rule 5760 = "sshd: authentication failed" (fires on every failed SSH password).
+  In this lab the brute-force rule 5716 never fired, so the response is bound to 5760.
+-->
+<command>
+  <name>custom-drop</name>
+  <executable>custom-drop.sh</executable>
+  <timeout_allowed>yes</timeout_allowed>
+</command>
+
+<active-response>
+  <command>custom-drop</command>
+  <location>local</location>          <!-- run on the agent that reported the attack -->
+  <rules_id>5760</rules_id>
+  <timeout>600</timeout>              <!-- unblock after 10 minutes -->
+</active-response>

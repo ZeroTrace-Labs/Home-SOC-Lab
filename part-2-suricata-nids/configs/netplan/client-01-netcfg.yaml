@@ -1,0 +1,14 @@
+# /etc/netplan/01-netcfg.yaml on an isolated client VM (example: Ubuntu Desktop)
+# Change the address per VM: Kali .10, Ubuntu Desktop .20, Windows 11 .30
+network:
+  version: 2
+  ethernets:
+    enp0s1:
+      dhcp4: false
+      addresses:
+        - 172.16.50.20/24
+      routes:
+        - to: default
+          via: 172.16.50.1
+      nameservers:
+        addresses: [1.1.1.1]

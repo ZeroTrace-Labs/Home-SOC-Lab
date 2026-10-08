@@ -1,0 +1,4 @@
+# /var/lib/suricata/rules/local.rules
+# Test signature: fires on ICMP from any host in $HOME_NET (the isolated 172.16.50.0/24 lab subnet).
+# rev:1 hard-coded Kali's IP (172.16.50.10), which silently ignored every other VM.
+alert icmp $HOME_NET any -> any any (msg:"SURICATA TEST ICMP DETECTED"; sid:9900001; rev:2;)
